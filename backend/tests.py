@@ -45,4 +45,4 @@ class ModelsTest(TestCase):
 
         self.assertEqual(user_game.user, self.user)
         self.assertEqual(user_game.game, game)
-        self.assertEqual(user_game.gotten_from, 'Steam')
+        self.assertEqual(user_game.gotten_from, 'Epic Games Store')
