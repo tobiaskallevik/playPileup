@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "name": "Action",
+    "slug": "action"
+  },
+  {
+    "id": 17,
+    "name": "Fantasy",
+    "slug": "fantasy"
+  },
+  {
+    "id": 18,
+    "name": "Science fiction",
+    "slug": "science-fiction"
+  },
+  {
+    "id": 19,
+    "name": "Horror",
+    "slug": "horror"
+  },
+  {
+    "id": 20,
+    "name": "Thriller",
+    "slug": "thriller"
+  },
+  {
+    "id": 21,
+    "name": "Survival",
+    "slug": "survival"
+  },
+  {
+    "id": 22,
+    "name": "Historical",
+    "slug": "historical"
+  },
+  {
+    "id": 23,
+    "name": "Stealth",
+    "slug": "stealth"
+  },
+  {
+    "id": 27,
+    "name": "Comedy",
+    "slug": "comedy"
+  },
+  {
+    "id": 28,
+    "name": "Business",
+    "slug": "business"
+  },
+  {
+    "id": 31,
+    "name": "Drama",
+    "slug": "drama"
+  },
+  {
+    "id": 32,
+    "name": "Non-fiction",
+    "slug": "non-fiction"
+  },
+  {
+    "id": 33,
+    "name": "Sandbox",
+    "slug": "sandbox"
+  },
+  {
+    "id": 34,
+    "name": "Educational",
+    "slug": "educational"
+  },
+  {
+    "id": 35,
+    "name": "Kids",
+    "slug": "kids"
+  },
+  {
+    "id": 38,
+    "name": "Open world",
+    "slug": "open-world"
+  },
+  {
+    "id": 39,
+    "name": "Warfare",
+    "slug": "warfare"
+  },
+  {
+    "id": 40,
+    "name": "Party",
+    "slug": "party"
+  },
+  {
+    "id": 41,
+    "name": "4X (explore, expand, exploit, and exterminate)",
+    "slug": "4x-explore-expand-exploit-and-exterminate"
+  },
+  {
+    "id": 42,
+    "name": "Erotic",
+    "slug": "erotic"
+  },
+  {
+    "id": 43,
+    "name": "Mystery",
+    "slug": "mystery"
+  },
+  {
+    "id": 44,
+    "name": "Romance",
+    "slug": "romance"
+  }
+]

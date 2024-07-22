@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Single player",
+    "slug": "single-player"
+  },
+  {
+    "id": 2,
+    "name": "Multiplayer",
+    "slug": "multiplayer"
+  },
+  {
+    "id": 3,
+    "name": "Co-operative",
+    "slug": "co-operative"
+  },
+  {
+    "id": 4,
+    "name": "Split screen",
+    "slug": "split-screen"
+  },
+  {
+    "id": 5,
+    "name": "Massively Multiplayer Online (MMO)",
+    "slug": "massively-multiplayer-online-mmo"
+  },
+  {
+    "id": 6,
+    "name": "Battle Royale",
+    "slug": "battle-royale"
+  }
+]

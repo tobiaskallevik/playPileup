@@ -11,9 +11,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User  # Specifies the model to serialize.
         fields = ['id', 'username', 'email']  # Fields to include in the serialization.
-        extra_kwargs = {
-            'password': {'write_only': True}  # Makes the password field write-only.
-        }
 
 
 # Custom Token Serializer
