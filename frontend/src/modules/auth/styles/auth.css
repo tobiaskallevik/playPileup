@@ -1,0 +1,24 @@
+.login-form {
+  max-width: 300px;
+}
+.login-form-forgot {
+  float: right;
+}
+.ant-col-rtl .login-form-forgot {
+  float: left;
+}
+.login-form-button {
+  width: 100%;
+}
+
+.authContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.authItem {
+  margin-bottom: 0.5rem;
+}
