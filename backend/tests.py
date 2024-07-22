@@ -41,7 +41,7 @@ class ModelsTest(TestCase):
 
     def test_user_game_creation(self):
         game = Game.objects.create(name='Test Game', slug='test-game')
-        user_game = UserGame.objects.create(user=self.user, game=game, gotten_from='Steam')
+        user_game = UserGame.objects.create(user=self.user, game=game, gotten_from='Epic Games Store')
 
         self.assertEqual(user_game.user, self.user)
         self.assertEqual(user_game.game, game)
