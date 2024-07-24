@@ -1,48 +1,72 @@
 from django.test import TestCase
-from core.models import Game, Genre, Mode, Theme, Engine, UserGame
-from django.contrib.auth import get_user_model
+from rest_framework.test import APIClient
+from rest_framework import status
+from django.urls import reverse
+from core.models import Game, Genre, Mode, Theme, Engine
+from authentication.models import User  # Import the custom user model
 
-class ModelsTest(TestCase):
+class GamesListAPITest(TestCase):
     def setUp(self):
-        self.genre = Genre.objects.create(name='Action', slug='action')
-        self.mode = Mode.objects.create(name='Single Player', slug='single-player')
-        self.theme = Theme.objects.create(name='Adventure', slug='adventure')
-        self.engine = Engine.objects.create(name='Unreal Engine', slug='unreal-engine')
-        self.user = get_user_model().objects.create_user(username='testuser', password='12345')
+        self.client = APIClient()
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.client.force_authenticate(user=self.user)
+        
+        # Create Genre, Mode, Theme, and Engine instances
+        genre1 = Genre.objects.create(name='Genre 1')
+        genre2 = Genre.objects.create(name='Genre 2')
+        mode1 = Mode.objects.create(name='Mode 1')
+        mode2 = Mode.objects.create(name='Mode 2')
+        theme1 = Theme.objects.create(name='Theme 1')
+        theme2 = Theme.objects.create(name='Theme 2')
+        engine1 = Engine.objects.create(name='Engine 1')
+        engine2 = Engine.objects.create(name='Engine 2')
+        
+        # Create Game instances and assign the Genre, Mode, Theme, and Engine instances
+        self.game1 = Game.objects.create(name='Game 1')
+        self.game1.genres.set([genre1])
+        self.game1.modes.set([mode1])
+        self.game1.themes.set([theme1])
+        self.game1.engines.set([engine1])
+        
+        self.game2 = Game.objects.create(name='Game 2')
+        self.game2.genres.set([genre2])
+        self.game2.modes.set([mode2])
+        self.game2.themes.set([theme2])
+        self.game2.engines.set([engine2])
+        
+        self.game3 = Game.objects.create(name='Game 3')
+        self.game3.genres.set([genre1])
+        self.game3.modes.set([mode2])
+        self.game3.themes.set([theme1])
+        self.game3.engines.set([engine2])
+        
+        self.url = reverse('game-list')  # URL to the games list endpoint
 
-    def test_game_creation(self):
-        game = Game.objects.create(
-            name='Test Game',
-            slug='test-game',
-            first_release_date=20230101,
-            rating=4.5,
-            rating_count=100,
-            cover_url_low='http://example.com/low.jpg',
-            cover_url_high='http://example.com/high.jpg',
-            summary='This is a test game.'
-        )
-        game.genres.add(self.genre)
-        game.modes.add(self.mode)
-        game.themes.add(self.theme)
-        game.engines.add(self.engine)
+    # Test no filter
+    def test_get_games_list(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
 
-        self.assertEqual(game.name, 'Test Game')
-        self.assertEqual(game.slug, 'test-game')
-        self.assertEqual(game.first_release_date, 20230101)
-        self.assertEqual(game.rating, 4.5)
-        self.assertEqual(game.rating_count, 100)
-        self.assertEqual(game.cover_url_low, 'http://example.com/low.jpg')
-        self.assertEqual(game.cover_url_high, 'http://example.com/high.jpg')
-        self.assertEqual(game.summary, 'This is a test game.')
-        self.assertIn(self.genre, game.genres.all())
-        self.assertIn(self.mode, game.modes.all())
-        self.assertIn(self.theme, game.themes.all())
-        self.assertIn(self.engine, game.engines.all())
+    # Test limit filter
+    def test_get_games_list_with_limit(self):
+        response = self.client.get(self.url, {'limit': 2})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
 
-    def test_user_game_creation(self):
-        game = Game.objects.create(name='Test Game', slug='test-game')
-        user_game = UserGame.objects.create(user=self.user, game=game, gotten_from='Epic Games Store')
+    # Test invalid limit filter
+    def test_get_games_list_with_invalid_limit(self):
+        response = self.client.get(self.url, {'limit': 'invalid'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        self.assertEqual(user_game.user, self.user)
-        self.assertEqual(user_game.game, game)
-        self.assertEqual(user_game.gotten_from, 'Epic Games Store')
+    # Test ganre filter
+    def test_get_games_list_with_genre_filter(self):
+        response = self.client.get(self.url, {'genres': '1'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
+    # Test ganre and mode filter
+    def test_get_games_list_with_multiple_filters(self):
+        response = self.client.get(self.url, {'genres': '1', 'modes': '2'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
