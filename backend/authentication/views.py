@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from authentication.models import User, Profile
-from authentication.serializer import UserSerializer, MyTokenObtainPairSerializer, RegisterSerializer
-from authentication.tokens import account_activation_token
+from authentication.serializer import UserSerializer, MyTokenObtainPairSerializer, RegisterSerializer, PasswordResetSerializer
+from authentication.tokens import account_activation_token, password_reset_token
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.sites.shortcuts import get_current_site
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -31,7 +31,8 @@ def get_routes(request):
         '/authentication/token/',
         '/authentication/register/',
         '/authentication/token/refresh/',
-        '/authentication/verify-email/'
+        '/authentication/verify-email/',
+        '/authentication/request_password_reset/',
     ]
     return Response(routes)
 
@@ -91,7 +92,6 @@ def verify_email(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def verify_email_confirm(request, uidb64, token):
-    
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -101,11 +101,9 @@ def verify_email_confirm(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.email_verified = True
         user.save()
-        messages.success(request, 'Your email has been verified.')
-        return render(request, 'authentication/verify_email_confirm.html')
-    
+        return Response({'message': 'Your email has been verified.'}, status=status.HTTP_200_OK)
     else:
-        return render(request, 'authentication/verify_email_invalid.html', status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Invalid token or user does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
     
     
 # Endpoint to send password reset email. It sends an email to the user with a link to reset their password.
@@ -121,20 +119,43 @@ def request_password_reset(request):
         return Response({'error': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     current_site = get_current_site(request)
-    subject = "Reset passowrd"
-    message = render_to_string('authentication/reset_email_message.html', {
+    subject = "Reset password"
+    message = render_to_string('authentication/password_reset_message.html', {
         'request': request,
         'user': user,
         'domain': current_site.domain,
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': account_activation_token.make_token(user),
+        'token': password_reset_token.make_token(user),
     })
 
     email_message = EmailMessage(
         subject, message, to=[email]
     )
     email_message.content_subtype = 'html'
+    email_message.extra_headers = {'X-Content-Type-Options': 'nosniff'}
     email_message.send()
 
     
     return Response({'response': 'Email sent'}, status=status.HTTP_200_OK)
+
+
+# Endpoint to reset password given a valid token.
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def password_reset(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and password_reset_token.check_token(user, token):
+        serializer = PasswordResetSerializer(data=request.data)
+        if serializer.is_valid():
+            user.set_password(serializer.validated_data['password1'])
+            user.save()
+            return Response({'response': 'Password has been reset'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)

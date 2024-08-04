@@ -57,3 +57,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         
         return user
+
+
+# Password reset serializer
+class PasswordResetSerializer(serializers.Serializer):
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['password1'] != data['password2']:
+            raise serializers.ValidationError("Passwords do not match")
+        return data
