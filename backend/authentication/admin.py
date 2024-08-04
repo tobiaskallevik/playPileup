@@ -3,12 +3,11 @@ from authentication.models import User, Profile
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['username', 'email']
+    list_display = ['username', 'email', 'email_verified']
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_editable = ['verified']
-    list_display = ['user', 'full_name', 'verified']
+    list_display = ['user']
 
 
 admin.site.register(User, UserAdmin)

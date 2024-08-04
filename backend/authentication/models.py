@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 class User(AbstractUser):
     username = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
+    email_verified = models.BooleanField(default=False)
     games = models.ManyToManyField('core.Game', related_name='users', through='core.UserGame')
 
     USERNAME_FIELD = 'email'
@@ -19,13 +20,10 @@ class User(AbstractUser):
 # Profile model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=300)
-    bio = models.TextField(max_length=500)
     image = models.ImageField(upload_to='default.jpg', default='user_images')
-    verified = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.full_name
+        return self.user.username
 
 
 # Signal to create a profile when a user is created

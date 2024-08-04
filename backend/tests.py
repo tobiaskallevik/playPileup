@@ -5,12 +5,13 @@ from django.urls import reverse
 from core.models import Game, Genre, Mode, Theme, Engine
 from authentication.models import User  # Import the custom user model
 
+
 class GamesListAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.user = User.objects.create_user(username='tester', password='testPass1.')
         self.client.force_authenticate(user=self.user)
-        
+
         # Create Genre, Mode, Theme, and Engine instances
         genre1 = Genre.objects.create(name='Genre 1')
         genre2 = Genre.objects.create(name='Genre 2')
@@ -20,26 +21,26 @@ class GamesListAPITest(TestCase):
         theme2 = Theme.objects.create(name='Theme 2')
         engine1 = Engine.objects.create(name='Engine 1')
         engine2 = Engine.objects.create(name='Engine 2')
-        
+
         # Create Game instances and assign the Genre, Mode, Theme, and Engine instances
         self.game1 = Game.objects.create(name='Game 1')
         self.game1.genres.set([genre1])
         self.game1.modes.set([mode1])
         self.game1.themes.set([theme1])
         self.game1.engines.set([engine1])
-        
+
         self.game2 = Game.objects.create(name='Game 2')
         self.game2.genres.set([genre2])
         self.game2.modes.set([mode2])
         self.game2.themes.set([theme2])
         self.game2.engines.set([engine2])
-        
+
         self.game3 = Game.objects.create(name='Game 3')
         self.game3.genres.set([genre1])
         self.game3.modes.set([mode2])
         self.game3.themes.set([theme1])
         self.game3.engines.set([engine2])
-        
+
         self.url = reverse('game-list')  # URL to the games list endpoint
 
     # Test no filter
